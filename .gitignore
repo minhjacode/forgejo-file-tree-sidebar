@@ -1,0 +1,33 @@
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files (may contain secrets)
+.env
+.env.local
+.env.*.local
+
+# Backup / scratch files
+*.bak
+*.orig
+*.tmp
+
+# Local copies of footer.tmpl or userscript.user.js with the real
+# OAUTH_CLIENT_ID baked in for personal deployment. Suffix yours
+# with `.local.` to keep them out of the repo.
+*.local.tmpl
+*.local.user.js
