@@ -10,6 +10,10 @@ Client-side file tree sidebar for Forgejo repositories. Forgejo has no native tr
 
 The sidebar appears on every repository page, lists the full git tree, highlights the current file, and persists per-repo expand state. It uses Forgejo's CSS variables and Octicon icons, so it follows the active theme including dark mode.
 
+
+![[sidebar_dark.png]]
+
+![[sidebar_light.png]]
 ## Installation
 
 Two methods. **Server-side** via `footer.tmpl` deploys the script for every user of the instance. **Userscript** via `userscript.user.js` installs it per browser through Tampermonkey or Violentmonkey. Both methods require an OAuth2 application registered in Forgejo.
@@ -55,6 +59,8 @@ Install Violentmonkey or Tampermonkey. Create a new userscript and paste the con
 ## Usage
 
 Visit a repository. The sidebar shows a **Sign in** button on first load. Click it. A popup opens with Forgejo's authorization page. Click **Authorize**. The popup closes and the sidebar populates.
+
+![[sidebar_login.png]]
 
 Tokens persist via the refresh token. The sidebar loads silently on subsequent visits.
 
