@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Forgejo File Tree Sidebar
 // @namespace    https://github.com/your-username/forgejo-file-tree-sidebar
-// @version      1.0.0
+// @version      1.1.0
 // @description  GitHub-style file tree sidebar for Forgejo (OAuth2 + PKCE)
 // @author       you
 // @license      MIT
