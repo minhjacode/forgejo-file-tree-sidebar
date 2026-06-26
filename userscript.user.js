@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Forgejo File Tree Sidebar
 // @namespace    https://github.com/your-username/forgejo-file-tree-sidebar
-// @version      1.1.0
+// @version      1.2.0
 // @description  GitHub-style file tree sidebar for Forgejo (OAuth2 + PKCE)
 // @author       you
 // @license      MIT
@@ -21,6 +21,8 @@
 (function () {
   'use strict';
 
+  const _nonce = (document.currentScript || {}).nonce || '';
+
   // ============================================================
   // CONFIG — replace OAUTH_CLIENT_ID below with the value from
   // Forgejo Settings → Applications → OAuth2 Applications.
@@ -38,6 +40,7 @@
   const KEY_OAUTH_STATE = 'ftree:oauth_state';
   const KEY_OAUTH_VERIFIER = 'ftree:oauth_verifier';
   const MAX_PER_PAGE = 1000;
+  const MAX_PAGES = 20;
 
   // Octicon paths (16x16 viewBox)
   const ICONS = {
@@ -228,6 +231,7 @@
   `;
   const styleEl = document.createElement('style');
   styleEl.textContent = css;
+  if (_nonce) styleEl.setAttribute('nonce', _nonce);
   document.head.appendChild(styleEl);
 
   // ============================================================
@@ -472,11 +476,21 @@
       loc.ref = repo.default_branch;
       loc.refType = 'branch';
     }
-    async function fetchOnce(refToUse) {
-      return api(`/repos/${loc.owner}/${loc.repo}/git/trees/${encodeURIComponent(refToUse)}?recursive=true&per_page=${MAX_PER_PAGE}`);
+    async function fetchAllPages(refToUse) {
+      const entries = [];
+      let page = 1;
+      while (page <= MAX_PAGES) {
+        const data = await api(
+          `/repos/${loc.owner}/${loc.repo}/git/trees/${encodeURIComponent(refToUse)}` +
+          `?recursive=true&per_page=${MAX_PER_PAGE}&page=${page}`
+        );
+        entries.push(...(data.tree || []));
+        if (!data.truncated) return { entries, truncated: false };
+        if (page === MAX_PAGES) return { entries, truncated: true };
+        page++;
+      }
     }
-    let data;
-    try { data = await fetchOnce(loc.ref); }
+    try { return await fetchAllPages(loc.ref); }
     catch (e) {
       if (e.needsAuth) throw e;
       let sha = null;
@@ -486,9 +500,8 @@
         try { const b = await api(`/repos/${loc.owner}/${loc.repo}/branches/${encodeURIComponent(loc.ref)}`); sha = b.commit?.id; } catch {}
       }
       if (!sha) throw e;
-      data = await fetchOnce(sha);
+      return await fetchAllPages(sha);
     }
-    return { entries: data.tree || [], truncated: !!data.truncated };
   }
 
   // ============================================================
@@ -708,7 +721,7 @@
     if (!scrollEl) return;
     const notice = document.createElement('div');
     notice.className = 'ftree-truncated';
-    notice.textContent = `Repo too large — tree truncated (showing first ${MAX_PER_PAGE} entries).`;
+    notice.textContent = `Repo very large — tree truncated at ${MAX_PER_PAGE * MAX_PAGES} entries.`;
     scrollEl.insertBefore(notice, scrollEl.firstChild);
   }
 

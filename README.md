@@ -10,10 +10,10 @@ Client-side file tree sidebar for Forgejo repositories. Forgejo has no native tr
 
 The sidebar appears on every repository page, lists the full git tree, highlights the current file, and persists per-repo expand state. It uses Forgejo's CSS variables and Octicon icons, so it follows the active theme including dark mode.
 
+![Sidebar in dark theme](./docs/screenshots/sidebar_dark.png)
 
-![[sidebar_dark.png]]
+![Sidebar in light theme](./docs/screenshots/sidebar_light.png)
 
-![[sidebar_light.png]]
 ## Installation
 
 Two methods. **Server-side** via `footer.tmpl` deploys the script for every user of the instance. **Userscript** via `userscript.user.js` installs it per browser through Tampermonkey or Violentmonkey. Both methods require an OAuth2 application registered in Forgejo.
@@ -60,7 +60,7 @@ Install Violentmonkey or Tampermonkey. Create a new userscript and paste the con
 
 Visit a repository. The sidebar shows a **Sign in** button on first load. Click it. A popup opens with Forgejo's authorization page. Click **Authorize**. The popup closes and the sidebar populates.
 
-![[sidebar_login.png]]
+![Sign-in prompt before authorization](./docs/screenshots/sidebar_login.png)
 
 Tokens persist via the refresh token. The sidebar loads silently on subsequent visits.
 
@@ -148,6 +148,7 @@ Open browser DevTools → Console. The script logs errors prefixed with `[ftree]
 | Sidebar shows but `API 401 on ...` | OAuth app misconfigured. Check Redirect URI matches exactly, including trailing slash |
 | Sidebar shows but `API 404 on /repos/...` | Token has wrong scope, or repo path parsing failed. Inspect the console output |
 | Sidebar does not appear | Template not loaded. Verify path includes `custom/templates/custom/` and Forgejo was restarted |
+| "Gitea JavaScript code couldn't run correctly" | A reverse proxy or hosting platform (e.g. Cloudron) is setting a `Content-Security-Policy` header with `default-src 'self'`, which blocks Forgejo's own inline scripts. Remove `default-src 'self'` from the proxy's CSP configuration and let Forgejo manage it. Keep only directives the proxy must own, such as `frame-ancestors`. |
 
 ## Development
 

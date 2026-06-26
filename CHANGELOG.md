@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.0 — 2026-06-26
+
+**Pagination for large repositories**
+
+The Forgejo API caps each recursive tree request at 1000 entries. Previously, repos with more than 1000 files were silently truncated. The script now fetches successive pages (1000 entries each) and merges them into a single tree. The safety cap is 20 pages (20,000 entries); a warning banner appears only if that hard limit is reached.
+
 ## 1.1.0 — 2026-06-26
 
 **Fix: Compatibility with Forgejo versions enforcing Content Security Policy**
